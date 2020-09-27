@@ -1,0 +1,32 @@
+version: '3.6'
+
+services:
+    bot:
+        build: bot
+        env_file: .env
+        depends_on: 
+            - redis
+            - mysql
+        command: ["./wait_for_it.sh", "mysql:5432", "--", "python", "bot.py"]
+    
+    redis:
+        image: redis:4.0.5-alpine
+        command: ["redis-server", "--appendonly", "yes", "--port", "5432"]
+        hostname: redis
+        volumes:
+            - ./bot/storage/redis/data:/data
+        
+    mysql:
+        image: mysql
+        container_name: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: example
+        volumes: 
+            - ./storage/mysql:/var/lib/mysql
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
