@@ -1,3 +1,6 @@
+You are loggined as "{{ user }}"
+
+<h2>List of questions:</h2>
 {% for survey in surveys_list %}
-    <h1>{{ survey }} </h1>
+    <li>{{ survey }} </li>
 {% endfor %}
