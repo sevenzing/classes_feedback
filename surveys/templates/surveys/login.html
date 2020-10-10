@@ -9,7 +9,12 @@
     
 
     <form method="POST" action="" id="login-form" class="login-form" autocomplete="off" role="main">
-        <h1>Log in</h1>
+        <h5>{% if user.email %}
+            You are loggined as 
+            <p>{{ user }}</p>
+        {% else %}
+            Log in 
+        {% endif%}</h5>
         
         {% csrf_token %}
 
