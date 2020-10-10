@@ -8,5 +8,6 @@ app_name = 'surveys'
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    url(r'^login$', views.PTD_login_page, name='login')    
+    url(r'^login$', views.PTD_login_page, name='login'),
+    url(r'^logout$', views.PTD_logout, name='logout')   
 ]

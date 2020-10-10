@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .models import Survey
 from .forms import PTDLoginForm
@@ -21,7 +21,6 @@ class IndexView(generic.ListView):
 def PTD_login_page(request):
     uservalue = ''
     passwordvalue = ''
-
     form = PTDLoginForm(request.POST or None)
     if form.is_valid():
         email = form.cleaned_data.get("email")
@@ -43,3 +42,7 @@ def PTD_login_page(request):
         context= {'form': form}
         # GET request
         return render(request, 'surveys/login.html', context)
+
+def PTD_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('surveys:index'))

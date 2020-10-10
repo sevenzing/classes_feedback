@@ -9,9 +9,7 @@
     
 
     <form method="POST" action="" id="login-form" class="login-form" autocomplete="off" role="main">
-        <h5>{% if user.email %}
-            You are loggined as 
-            <p>{{ user }}</p>
+        <h5>{% if user.is_authenticated %}
         {% else %}
             Log in 
         {% endif%}</h5>
@@ -24,7 +22,12 @@
 
         {{ form.as_p }}
         <input type="submit" name="submit" value="Log in"/>
-
+        {% if user.is_authenticated %}
+            You are loggined as 
+            <p>{{ user }}</p>
+            <a href="{% url 'surveys:logout' %}">Log Out</a>
+        {% endif %}
+        
   <figure aria-hidden="true">
     <div class="person-body"></div>
     <div class="neck skin"></div>
