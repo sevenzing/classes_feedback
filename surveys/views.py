@@ -24,10 +24,10 @@ def PTD_login_page(request):
 
     form = PTDLoginForm(request.POST or None)
     if form.is_valid():
-        uservalue = form.cleaned_data.get("username")
-        passwordvalue= form.cleaned_data.get("password")
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
 
-        user = authenticate(username=uservalue, password=passwordvalue)
+        user = authenticate(email=email, password=password)
         if user is not None:
             # make log in the system
             login(request, user)
