@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 import datetime
 
@@ -6,6 +7,8 @@ from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from surveys.models import *
+
+# various model testing
 
 class QuestionModelTests(TestCase):
 	'''
@@ -27,3 +30,28 @@ class CourseeGroupModelTests(TestCase):
 	'''
 	def createCourseGroup(number):
 		return CourseGroup.objects.create(number=number,)
+
+# user creation testing
+
+class UserManagerTests(TestCase):
+	'''
+	Test for user creation
+	'''
+	def createUser(self):
+		new_user = get_user_model()
+		user = new_user.objects.create_user(email='elliot@local.com', password='alderson')
+		self.assertEqual(user.email, 'elliot@local.com')
+		self.assertTrue(user.is_active)
+		self.assertTrue(user.is_staff)
+		self.assertFalse(user.is_superuser)
+
+	'''
+	Test for super user creation
+	'''
+	def createSuperuser(self):
+		new_user = get_user_model()
+		user = new_user.objects.create_superuser(email='admin@local.com', password='strong_password')
+		self.assertEqual(user.email, 'admin@local.com')
+		self.assertTrue(user.is_active)
+		self.assertTrue(user.is_staff)
+		self.assertTrue(user.is_superuser)
