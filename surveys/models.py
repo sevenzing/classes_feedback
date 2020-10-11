@@ -53,6 +53,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
     
+    def has_perm(self, perm, obj=None):
+        print(perm)
+        return super().has_perm(perm, obj=obj)
+
+    def has_perms(self, perm_list, obj=None):
+        print(perm_list)
+        return super().has_perms(perm_list, obj=obj)
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser or app_label in ('surveys',)
+
     def list_of_courses(self):
         return ', '.join(list(map(str, self.courses.all())))
 

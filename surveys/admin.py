@@ -20,6 +20,13 @@ class SubjectAdmin(admin.ModelAdmin):
 
 
 class SurveyAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        q = super().get_queryset(request)
+        user = request.user 
+        if user.is_superuser:
+            return q
+        return q.filter(course__in=user.courses.all())
+    
     fieldsets = (
         ('Main', {
             'fields': (
@@ -42,6 +49,7 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ('email', 'is_staff')
     fieldsets = (
         (None, {'fields': ('email', 'password', 'name', 'surname')}),
+        ('Group', {'fields': ('groups',)}),
         ('Permissions', {'fields': ('is_doe', 'is_ta', 'is_prof', 'is_active')}),
         ('Courses', {'fields': ('courses', )}),
     )
