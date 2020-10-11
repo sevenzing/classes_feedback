@@ -53,15 +53,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
     
-    #def has_perm(self, perm, obj=None):
-    #    "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-    #   return super().has_perm(perm, obj=obj)
-
-    #def has_module_perms(self, app_label):
-    #    "Does the user have permissions to view the app `app_label`?"
-    #    # Simplest possible answer: Yes, always
-    #    return True
+    def list_of_courses(self):
+        return self.courses.all().__str__()
 
     def __str__(self):
         return self.email.__str__()
