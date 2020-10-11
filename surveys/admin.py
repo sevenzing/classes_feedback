@@ -21,6 +21,10 @@ class SubjectAdmin(admin.ModelAdmin):
 
 class SurveyAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
+        '''
+        Returns a query set of only those surveys that can be accessed
+        if superuser, than returns full query
+        '''
         q = super().get_queryset(request)
         user = request.user 
         if user.is_superuser:
