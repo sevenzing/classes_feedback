@@ -20,6 +20,17 @@ class SubjectAdmin(admin.ModelAdmin):
 
 
 class SurveyAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        '''
+        Returns a query set of only those surveys that can be accessed
+        if superuser, than returns full query
+        '''
+        q = super().get_queryset(request)
+        user = request.user 
+        if user.is_superuser:
+            return q
+        return q.filter(course__in=user.courses.all())
+    
     fieldsets = (
         ('Main', {
             'fields': (
@@ -38,11 +49,13 @@ class CustomUserAdmin(BaseUserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_superuser', 'name', 'surname')
+    list_display = ('email', 'is_staff', 'is_superuser', 'name', 'surname', 'list_of_courses')
     list_filter = ('email', 'is_staff')
     fieldsets = (
         (None, {'fields': ('email', 'password', 'name', 'surname')}),
+        ('Group', {'fields': ('groups',)}),
         ('Permissions', {'fields': ('is_doe', 'is_ta', 'is_prof', 'is_active')}),
+        ('Courses', {'fields': ('courses', )}),
     )
     add_fieldsets = (
         (None, {

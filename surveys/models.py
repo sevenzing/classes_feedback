@@ -43,7 +43,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_ta = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     # can user access admin page?
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
     # designates that this user has all permissions without explicitly assigning them
     is_superuser = models.BooleanField(default=False)
     
@@ -53,15 +53,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
     
-    #def has_perm(self, perm, obj=None):
-    #    "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-    #   return super().has_perm(perm, obj=obj)
+    def has_perm(self, perm, obj=None):
+        print(perm)
+        return super().has_perm(perm, obj=obj)
 
-    #def has_module_perms(self, app_label):
-    #    "Does the user have permissions to view the app `app_label`?"
-    #    # Simplest possible answer: Yes, always
-    #    return True
+    def has_perms(self, perm_list, obj=None):
+        print(perm_list)
+        return super().has_perms(perm_list, obj=obj)
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser or app_label in ('surveys',)
+
+    def list_of_courses(self):
+        return ', '.join(list(map(str, self.courses.all())))
 
     def __str__(self):
         return self.email.__str__()
@@ -78,7 +82,7 @@ class Survey(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Survey('{self.survey_short_name}')"
+        return f"{self.course} - \"{self.survey_short_name}\""
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200, default='Sample question text')
