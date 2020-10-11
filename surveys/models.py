@@ -54,7 +54,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
     
     def list_of_courses(self):
-        return self.courses.all().__str__()
+        return ', '.join(list(map(str, self.courses.all())))
 
     def __str__(self):
         return self.email.__str__()
