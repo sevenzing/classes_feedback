@@ -30,6 +30,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_doe', True)
         extra_fields.setdefault('is_ta', False)
         extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
         
         if extra_fields.get('is_doe') is not True:
             raise ValueError('Superuser must have is_doe=True.')

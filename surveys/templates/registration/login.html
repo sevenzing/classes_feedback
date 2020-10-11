@@ -1,0 +1,48 @@
+<html>
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+</head>
+
+<body>
+    
+
+    <form method="POST" action="" id="login-form" class="login-form" autocomplete="off" role="main">
+        <h5>{% if user.is_authenticated %}
+        {% else %}
+            Log in 
+        {% endif%}</h5>
+        
+        {% csrf_token %}
+
+        {% if error %}
+            {{ error }}
+        {% endif %}
+
+        {{ form.as_p }}
+        <input type="submit" name="submit" value="Log in"/>
+        {% if user.is_authenticated %}
+            You are loggined as 
+            <p>{{ user }}</p>
+            <a href="{% url 'surveys:logout' %}">Log Out</a>
+        {% endif %}
+        
+  <figure aria-hidden="true">
+    <div class="person-body"></div>
+    <div class="neck skin"></div>
+    <div class="head skin">
+      <div class="eyes"></div>
+      <div class="mouth"></div>
+    </div>
+    <div class="hair"></div>
+    <div class="ears"></div>
+    <div class="shirt-1"></div>
+    <div class="shirt-2"></div>
+  </figure>
+</form>
+
+
+</body>
+
+</html>
