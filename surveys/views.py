@@ -39,7 +39,7 @@ def PTD_login_page(request):
             return HttpResponseRedirect(reverse('surveys:index'))
         else:
             context= {'form': form,
-                      'error': 'The username and password combination is incorrect'}
+                      'error': 'The email or password is incorrect'}
             # return error
             return render(request, 'registration/login.html', context)
 

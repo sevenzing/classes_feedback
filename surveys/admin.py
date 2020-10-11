@@ -54,7 +54,7 @@ class CustomUserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password', 'name', 'surname')}),
         ('Group', {'fields': ('groups',)}),
-        ('Permissions', {'fields': ('is_doe', 'is_ta', 'is_prof', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff', 'is_doe', 'is_ta', 'is_prof', 'is_active')}),
         ('Courses', {'fields': ('courses', )}),
     )
     add_fieldsets = (
