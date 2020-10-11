@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
 
-from .models import Survey
+from .models import Survey, Course
 from .forms import PTDLoginForm
 
 class IndexView(generic.ListView):
@@ -16,8 +16,13 @@ class IndexView(generic.ListView):
     #    return 
 
     def get_queryset(self):
-        return Survey.objects.order_by('-pub_date')
-
+        user = self.request.user
+        if user.is_superuser:
+            available_courses = Course.objects.all()
+        else:
+            available_courses = user.courses.all()
+        return Survey.objects.all().filter(course__in=available_courses)
+        
 def PTD_login_page(request):
     uservalue = ''
     passwordvalue = ''
@@ -36,13 +41,13 @@ def PTD_login_page(request):
             context= {'form': form,
                       'error': 'The username and password combination is incorrect'}
             # return error
-            return render(request, 'surveys/login.html', context)
+            return render(request, 'registration/login.html', context)
 
     else:
         context= {'form': form}
         # GET request
-        return render(request, 'surveys/login.html', context)
+        return render(request, 'registration/login.html', context)
 
 def PTD_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('surveys:index'))
+    return HttpResponseRedirect(reverse('surveys:login'))

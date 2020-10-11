@@ -6,14 +6,36 @@ import random
 
 from .managers import CustomUserManager
 
-class Course(models.Model):
-    name = models.CharField(max_length=100, default="ProbStat")
-    year = models.CharField(max_length=4, default="BS19")
+class Subject(models.Model):
+    title = models.CharField(max_length=200, default='PS')
+    description = models.CharField(max_length=1000, default='Default description')
+    is_elective = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.title
 
+
+class Course(models.Model):
+    DEGREE_CHOICES = [
+        ('BS', 'Bachelor'),
+        ('MS', 'Master'),
+    ]
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    degree = models.CharField(max_length=2, choices=DEGREE_CHOICES, default='BS')
+    year = models.CharField(max_length=2, default="19")
+
+    def __str__(self):
+        return f"{self.degree}-{self.year} {self.subject}"
+
+class CourseGroup(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    number = models.CharField(max_length=2, default='01')
+    all_groups = models.BooleanField(default=False)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=200, default="Nikolya")
+    name = models.CharField(max_length=200, default="Nikolai")
     surname = models.CharField(max_length=200, default="Shilov")
 
     is_doe = models.BooleanField(default=False)
@@ -31,20 +53,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
     
-    #def has_perm(self, perm, obj=None):
-    #    "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-    #   return super().has_perm(perm, obj=obj)
+    def has_perm(self, perm, obj=None):
+        print(perm)
+        return super().has_perm(perm, obj=obj)
 
-    #def has_module_perms(self, app_label):
-    #    "Does the user have permissions to view the app `app_label`?"
-    #    # Simplest possible answer: Yes, always
-    #    return True
+    def has_perms(self, perm_list, obj=None):
+        print(perm_list)
+        return super().has_perms(perm_list, obj=obj)
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser or app_label in ('surveys',)
+
+    def list_of_courses(self):
+        return ', '.join(list(map(str, self.courses.all())))
 
     def __str__(self):
         return self.email.__str__()
 
 class Survey(models.Model):
+    
     survey_short_name = models.CharField(max_length=100) 
     
     deadline = models.DateTimeField('deadline')
@@ -52,8 +79,10 @@ class Survey(models.Model):
     # set default value to current time
     pub_date = models.DateTimeField(auto_now_add=True)
 
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
     def __str__(self):
-        return f"Survey('{self.survey_short_name}')"
+        return f"{self.course} - \"{self.survey_short_name}\""
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200, default='Sample question text')
