@@ -43,7 +43,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_ta = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     # can user access admin page?
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
     # designates that this user has all permissions without explicitly assigning them
     is_superuser = models.BooleanField(default=False)
     
