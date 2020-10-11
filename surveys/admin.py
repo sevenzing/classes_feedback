@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Survey, Question
+from .models import Survey, Question, Course, Subject
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 
@@ -9,12 +9,23 @@ class QuestionInline(admin.TabularInline):
     model = Question
     extra = 3
 
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    pass
+
+
+
 class SurveyAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Main', {
             'fields': (
                 'survey_short_name',
                 'deadline',
+                'course',
             ),
 
         }),
