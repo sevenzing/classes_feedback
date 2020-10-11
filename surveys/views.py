@@ -36,13 +36,13 @@ def PTD_login_page(request):
             context= {'form': form,
                       'error': 'The username and password combination is incorrect'}
             # return error
-            return render(request, 'surveys/login.html', context)
+            return render(request, 'registration/login.html', context)
 
     else:
         context= {'form': form}
         # GET request
-        return render(request, 'surveys/login.html', context)
+        return render(request, 'registration/login.html', context)
 
 def PTD_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('surveys:index'))
+    return HttpResponseRedirect(reverse('surveys:login'))
