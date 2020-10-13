@@ -21,7 +21,7 @@ class Course(models.Model):
         ('MS', 'Master'),
     ]
 
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='courses')
     degree = models.CharField(max_length=2, choices=DEGREE_CHOICES, default='BS')
     year = models.CharField(max_length=2, default="19")
 
@@ -29,7 +29,7 @@ class Course(models.Model):
         return f"{self.degree}-{self.year} {self.subject}"
 
 class CourseGroup(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='coursegroups')
     number = models.CharField(max_length=2, default='01')
     all_groups = models.BooleanField(default=False)
 
@@ -79,7 +79,7 @@ class Survey(models.Model):
     # set default value to current time
     pub_date = models.DateTimeField(auto_now_add=True)
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='surveys')
 
     def __str__(self):
         return f"{self.course} - \"{self.survey_short_name}\""
@@ -87,7 +87,7 @@ class Survey(models.Model):
 class Question(models.Model):
     question_text = models.CharField(max_length=200, default='Sample question text')
 
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='questions')
 
     def __str__(self):
         return f"Question('{self.question_text}')"
