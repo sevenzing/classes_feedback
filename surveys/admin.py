@@ -5,6 +5,8 @@ from .models import Survey, Question, Course, Subject
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 
+import logging
+
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 3

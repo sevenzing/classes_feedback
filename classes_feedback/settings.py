@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'surveys.apps.SurveysConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -122,3 +123,12 @@ STATIC_URL = '/static/'
 
 
 AUTH_USER_MODEL = 'surveys.CustomUser'
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

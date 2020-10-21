@@ -3,7 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import datetime
 import random
-
+import ast
+import uuid 
 from .managers import CustomUserManager
 
 class Subject(models.Model):
@@ -54,11 +55,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
     
     def has_perm(self, perm, obj=None):
-        print(perm)
         return super().has_perm(perm, obj=obj)
 
     def has_perms(self, perm_list, obj=None):
-        print(perm_list)
         return super().has_perms(perm_list, obj=obj)
 
     def has_module_perms(self, app_label):
@@ -70,9 +69,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email.__str__()
 
+def make_id() -> str:
+        return random.randrange(16**8)
+
 class Survey(models.Model):
-    
-    survey_short_name = models.CharField(max_length=100) 
+    id = models.BigIntegerField(
+        primary_key=True, 
+        default = make_id, 
+        editable = False
+    )
+    survey_short_name = models.CharField('Short name for survey', max_length=100) 
     
     deadline = models.DateTimeField('deadline')
 
@@ -82,12 +88,28 @@ class Survey(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='surveys')
 
     def __str__(self):
-        return f"{self.course} - \"{self.survey_short_name}\""
+        return f"{self.course} - \"{self.survey_short_name}\" ({self.id})"
 
 class Question(models.Model):
-    question_text = models.CharField(max_length=200, default='Sample question text')
-
+    TYPE_CHOICES = [
+        (0, 'Single choice'),
+        (1, 'Multichoice'),
+        (2, 'Rate question'),
+        (3, 'Input text'),
+        ]
+    
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='questions')
+    number = models.IntegerField('Order of question', default=1)
+    required = models.BooleanField('Required', default=False)
+    question_text = models.CharField('Text of question', max_length=200, default='Sample question text')
+    question_type = models.SmallIntegerField('Question type', default=0, choices=TYPE_CHOICES)
+    question_data = models.TextField('Content of question', default="['Sample choice 1', 'Sample choice 2']")
+
+    @property
+    def data(self):
+        data = ast.literal_eval(self.question_data)
+        assert isinstance(data, list), 'Data shoud be in form of list'
+        return data
 
     def __str__(self):
         return f"Question('{self.question_text}')"
