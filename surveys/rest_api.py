@@ -1,5 +1,5 @@
 from rest_framework import routers, serializers, viewsets
-from .models import Survey, Question
+from .models import Survey, Question, Course
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
@@ -8,36 +8,35 @@ from typing import List
 
 router = routers.DefaultRouter()
 
-class SurveysSerializer(serializers.HyperlinkedModelSerializer):
+class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    subject = serializers.StringRelatedField()
     class Meta:
-        model = Survey
-        fields = ['survey_short_name', 'deadline']
+        model = Course
+        fields = ['subject', 'degree', 'year', 'id']
+
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
-        fields = ['number', 'required', 'question_text', 'question_type', 'data']
+        fields = ['id', 'number', 'required', 'question_text', 'question_type', 'data']
 
-class SurveyViewSet(viewsets.ViewSet):
+
+class SurveysSerializer(serializers.HyperlinkedModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True)
+    course = CourseSerializer(read_only=True)
+    class Meta:
+        model = Survey
+        fields = ['id','survey_short_name', 'deadline', 'questions', 'course']
+
+
+class SurveyViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for listing or retrieving users.
     """
-    def get_quesitons(self, survey: Survey) -> List[QuestionSerializer]:
-        questions = survey.questions.all()
-        q_ = []
-        for question in questions:
-            q_.append(QuestionSerializer(question).data)
-        
-        return q_
+    
+    serializer_class = SurveysSerializer
+    
+    def get_queryset(self):
+        return Survey.objects.all()
 
-    def retrieve(self, request, pk=None):
-        queryset = Survey.objects.all()
-        survey = get_object_or_404(queryset, pk=pk)
-        serializer = SurveysSerializer(survey)
-        data = serializer.data
-        data['questions'] = self.get_quesitons(survey)
-        logging.warning(data)
-        return Response(data)
-
-    queryset = Survey.objects.none() 
-router.register(r'users', SurveyViewSet, basename='user')
+router.register(r'survey', SurveyViewSet, basename='survey')

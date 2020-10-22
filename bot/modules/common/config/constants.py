@@ -17,3 +17,5 @@ redis = {
 }
 
 TIME_ZONE = 'Etc/GMT-3'
+
+SERVER_API_URL = 'http://surveys:8000/surveys/api/'
