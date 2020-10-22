@@ -13,7 +13,18 @@ class QuestionInline(admin.TabularInline):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    pass
+     def get_queryset(self, request):
+        '''
+        Returns a query set of only those courses that can be accessed.
+        If superuser, than returns full query
+        '''
+        q = super().get_queryset(request)
+        user = request.user 
+        if user.is_superuser:
+            return q
+        return q.filter(id__in=user.courses.all())
+
+
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -24,8 +35,8 @@ class SubjectAdmin(admin.ModelAdmin):
 class SurveyAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         '''
-        Returns a query set of only those surveys that can be accessed
-        if superuser, than returns full query
+        Returns a query set of only those surveys that can be accessed.
+        If superuser, than returns full query
         '''
         q = super().get_queryset(request)
         user = request.user 

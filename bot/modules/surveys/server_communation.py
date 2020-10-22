@@ -23,9 +23,12 @@ class Survey:
         self.title = survey_short_name
         self.deadline = deadline
         self.questions = list(map(lambda data: Question(**data), questions))
+        self.course = kwargs.get('course', None)
+        if self.course:
+            self.course = Course(**self.course)
 
     def __str__(self):
-        return f'Survey "{self.title}"\n\n' + '\n'.join(list(map(str, self.questions)))
+        return f'Survey "{self.title}" for course {self.course}\n\n' + '\n'.join(list(map(str, self.questions)))
 
 class Question:
     def __init__(self, number, required, question_text, question_type, data, *args, **kwargs):
@@ -37,3 +40,12 @@ class Question:
     
     def __str__(self):
         return f'Question #{self.number} ({self.type}): "{self.text}"\n' + '\n'.join(self.data)
+
+class Course:
+    def __init__(self, subject, degree, year, *args, **kwargs):
+        self.subject = subject
+        self.degree = degree
+        self.year = year
+    
+    def __str__(self):
+        return f"{self.degree}-{self.year} {self.subject}"

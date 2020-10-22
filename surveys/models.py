@@ -6,6 +6,8 @@ import random
 import ast
 import uuid 
 from .managers import CustomUserManager
+from surveys.config import BOT_ALIAS
+
 
 class Subject(models.Model):
     title = models.CharField(max_length=200, default='PS')
@@ -88,7 +90,12 @@ class Survey(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='surveys')
 
     def __str__(self):
-        return f"{self.course} - \"{self.survey_short_name}\" ({self.id})"
+        return f"{self.course} - \"{self.survey_short_name}\""
+    
+
+    @property
+    def url(self) -> str:
+        return f"https://t.me/{BOT_ALIAS}?start={self.id}"
 
 class Question(models.Model):
     TYPE_CHOICES = [
