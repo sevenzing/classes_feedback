@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='survey',
             name='id',
-            field=models.BigIntegerField(default=surveys.models.make_id, primary_key=True, serialize=False),
+            field=models.BigIntegerField(default=surveys.models.ten_digits_id, primary_key=True, serialize=False),
         ),
     ]

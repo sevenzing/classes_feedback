@@ -6,7 +6,14 @@ import random
 import ast
 import uuid 
 from .managers import CustomUserManager
-from surveys.config import BOT_ALIAS
+from classes_feedback.settings import BOT_ALIAS, API_KEY
+import logging
+
+def ten_digits_id(): 
+    return random.randrange(10**10, 10**11)
+
+def six_digits_id(): 
+    return random.randrange(10**5, 10**6)
 
 
 class Subject(models.Model):
@@ -17,24 +24,37 @@ class Subject(models.Model):
     def __str__(self):
         return self.title
 
-
-class Course(models.Model):
+class Track(models.Model):
     DEGREE_CHOICES = [
         ('BS', 'Bachelor'),
         ('MS', 'Master'),
     ]
-
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='courses')
     degree = models.CharField(max_length=2, choices=DEGREE_CHOICES, default='BS')
     year = models.CharField(max_length=2, default="19")
 
     def __str__(self):
-        return f"{self.degree}-{self.year} {self.subject}"
+        return f"{self.degree}-{self.year}"
+
+class Course(models.Model):
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='courses')
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name='courses')
+
+    def __str__(self):
+        return f"{self.track} {self.subject}"
 
 class CourseGroup(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='coursegroups')
     number = models.CharField(max_length=2, default='01')
     all_groups = models.BooleanField(default=False)
+
+class Student(models.Model):
+    email = models.EmailField(unique=True, default='n.surname@innopolis.univeristy')
+    code = models.BigIntegerField(unique=True, default=six_digits_id)
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name='students')
+    
+    def __str__(self):
+        return self.email.__str__()
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -71,13 +91,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email.__str__()
 
-def make_id() -> str:
-        return random.randrange(16**8)
 
 class Survey(models.Model):
     id = models.BigIntegerField(
         primary_key=True, 
-        default = make_id, 
+        default = ten_digits_id, 
         editable = False
     )
     survey_short_name = models.CharField('Short name for survey', max_length=100) 

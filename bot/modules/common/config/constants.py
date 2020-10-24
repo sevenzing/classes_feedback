@@ -16,6 +16,10 @@ redis = {
 
 }
 
+mongo = {
+    'host': 'mongodb://root:password@mongo:27017/'
+}
+
 TIME_ZONE = 'Etc/GMT-3'
 
-SERVER_API_URL = 'http://surveys:8000/surveys/api/'
+SERVER_API_URL = f'http://surveys:8000/surveys/api/{BOT_TOKEN}/'

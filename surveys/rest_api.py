@@ -1,18 +1,25 @@
-from rest_framework import routers, serializers, viewsets
-from .models import Survey, Question, Course
+from rest_framework import  serializers, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from .models import Survey, Question, Course, Student, Track
 
-import logging
+from json.decoder import JSONDecodeError
+import json
 from typing import List
+import logging
 
-router = routers.DefaultRouter()
+class TackSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Track
+        fields = ['degree', 'year', 'id']
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     subject = serializers.StringRelatedField()
+    track = TackSerializer(read_only=True)
     class Meta:
         model = Course
-        fields = ['subject', 'degree', 'year', 'id']
+        fields = ['track', 'subject', 'id']
 
 
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,4 +46,30 @@ class SurveyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Survey.objects.all()
 
-router.register(r'survey', SurveyViewSet, basename='survey')
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['email']
+    
+
+class UserViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=['post', 'get'])    
+    def validate(self, request):
+        logging.warning(f'Got data: {request.body}')
+            
+        try:
+            data = json.loads(request.body)
+            assert isinstance(data, dict)
+            email, code = data['email'], data['code']
+        except (AssertionError, JSONDecodeError) as e:
+            return Response({'error': 'Incorrect format. Send json bytes'})
+        except KeyError:
+            return Response({'error': 'email and code field does\'t provided'})
+
+        try:
+            student = Student.objects.get(email=email, code=code)
+        except Student.DoesNotExist:
+            return Response({'confirmed': False})
+
+        return Response({'confirmed': True})
+            

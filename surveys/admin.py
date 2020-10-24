@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Survey, Question, Course, Subject
+from .models import Survey, Question, Course, Subject, Track, Student
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 
@@ -24,10 +24,17 @@ class CourseAdmin(admin.ModelAdmin):
             return q
         return q.filter(id__in=user.courses.all())
 
-
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    fields = ('email', 'code', 'track')
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Track)
+class TrackAdmin(admin.ModelAdmin):
     pass
 
 

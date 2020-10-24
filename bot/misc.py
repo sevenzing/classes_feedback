@@ -1,8 +1,7 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from pymongo import MongoClient
+from umongo import Instance
 import logging
 
 from modules.common.config import constants
@@ -14,10 +13,8 @@ logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
 
 storage = RedisStorage2(**constants.redis)
 
-db_engine = create_engine(constants.DATABASE_URL)
-Base = declarative_base()
-Session = sessionmaker(bind=db_engine)
-
+mongo_client = MongoClient(**constants.mongo)
+mongo_instance = Instance(mongo_client.surveys)
 
 bot = Bot(token=constants.BOT_TOKEN)
 dp = Dispatcher(bot, storage=storage)
