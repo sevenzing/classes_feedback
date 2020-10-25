@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.utils import timezone
 import datetime
 import random
 import ast
@@ -49,7 +50,7 @@ class CourseGroup(models.Model):
     all_groups = models.BooleanField(default=False)
 
 class Student(models.Model):
-    email = models.EmailField(unique=True, default='n.surname@innopolis.univeristy')
+    email = models.EmailField(unique=True, default='n.surname@innopolis.university')
     code = models.BigIntegerField(unique=True, default=six_digits_id)
     track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name='students')
     
@@ -110,6 +111,9 @@ class Survey(models.Model):
     def __str__(self):
         return f"{self.course} - \"{self.survey_short_name}\""
     
+    @property
+    def is_available(self):
+        return self.deadline >= timezone.now() >= self.pub_date
 
     @property
     def url(self) -> str:

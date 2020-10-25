@@ -2,7 +2,7 @@ from aiogram import types
 import logging
 
 from modules.surveys.server_communation import get_survey, Survey
-from modules.database.models import User, find_user
+from modules.database.models import User, Track, find_user
 from modules.common.utils import parse_command
 from . import messages
 
@@ -32,7 +32,15 @@ async def cmd_start(message: types.Message):
     else:
         await message.answer(messages.ON_CMD_START)
 
-async def get_survey_or_none(user, pk):
+async def get_survey_or_none(user: User, pk):
     survey: Survey = get_survey(pk)
-    return survey
+    if not survey:
+        return
+    
+    survey_track = survey.course.track
+    
+    if survey_track == Track(**user.track):
+        return survey
+    else:
+        logging.debug(f'User {user} have not access to track {survey_track}')
     

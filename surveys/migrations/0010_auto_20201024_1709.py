@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='student',
             name='email',
-            field=models.EmailField(default='n.surname@innopolis.univeristy', max_length=254, unique=True),
+            field=models.EmailField(default='n.surname@innopolis.university', max_length=254, unique=True),
         ),
         migrations.AlterField(
             model_name='student',

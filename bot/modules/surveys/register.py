@@ -4,8 +4,14 @@ from aiogram import types
 import logging
 
 from modules.surveys.server_communation import validate_user
-from modules.database.models import User, find_user, create_user
 from modules.common.utils import parse_command, is_email_correct
+from modules.database.models import (
+    Track,
+    User, 
+    find_user,
+    create_user,
+    )
+    
 from . import messages
 
 class RegistrationStates(StatesGroup):
@@ -52,19 +58,20 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         email = data['email']
     
-    if not validate_user(email, code):    
+    user_response = validate_user(email, code)
+    if not user_response['confirmed']:    
         await message.answer(messages.INVALID_CODE)
     else:
         # create user
         chat_id = message.from_user.id
         username = message.from_user.username
-        
+        track = Track(**user_response['track'])
         try:
-            user = create_user(chat_id, email, username)
+            user = create_user(chat_id, email, username, track.raw_data)
         except Exception:
             await message.answer('error.')
             return
         finally:    
             await state.finish()
         
-        await message.answer(messages.REGISTERED)
+        await message.answer(messages.REGISTER_FINISH % (email, track))

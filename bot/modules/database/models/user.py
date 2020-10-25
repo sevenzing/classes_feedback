@@ -14,12 +14,17 @@ class User(Document):
     chat_id = fields.IntField(required=True, unique=True)
     username = fields.StrField(required=True)
     email = fields.EmailField(required=True)
-
+    track = fields.DictField()
+    current_survey = fields.DictField(default={})
+    current_question = fields.DictField(default={})
 
     def update(self, **attrs) -> Union[UpdateResult, InsertOneResult]:
         for attr in attrs:
             self[attr] = attrs[attr]
         return self.commit()
+
+    def __str__(self):
+        return f"User({self.email})"
 
     class Meta:
         collection_name = 'users'
@@ -30,13 +35,13 @@ def find_user(**dct) -> User:
     '''
     return User.find_one(dct)
 
-def create_user(chat_id, email, username) -> User:
+def create_user(chat_id, email, username, track) -> User:
     '''
     Creates User 
     '''
-    user = User(chat_id=chat_id, email=email, username=username)
+    user = User(chat_id=chat_id, email=email, username=username, track=track)
     user.commit()
     user.required_validate()
-    logging.debug(f"User with params {(chat_id, email, username)} created.")
+    logging.debug(f"User with params {(chat_id, email, username, track)} created.")
     return user
 

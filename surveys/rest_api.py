@@ -9,14 +9,14 @@ import json
 from typing import List
 import logging
 
-class TackSerializer(serializers.HyperlinkedModelSerializer):
+class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
         fields = ['degree', 'year', 'id']
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     subject = serializers.StringRelatedField()
-    track = TackSerializer(read_only=True)
+    track = TrackSerializer(read_only=True)
     class Meta:
         model = Course
         fields = ['track', 'subject', 'id']
@@ -33,7 +33,7 @@ class SurveysSerializer(serializers.HyperlinkedModelSerializer):
     course = CourseSerializer(read_only=True)
     class Meta:
         model = Survey
-        fields = ['id','survey_short_name', 'deadline', 'questions', 'course']
+        fields = ['id','survey_short_name', 'is_available', 'questions', 'course']
 
 
 class SurveyViewSet(viewsets.ModelViewSet):
@@ -67,9 +67,9 @@ class UserViewSet(viewsets.ViewSet):
             return Response({'error': 'email and code field does\'t provided'})
 
         try:
-            student = Student.objects.get(email=email, code=code)
+            student: Student = Student.objects.get(email=email, code=code)
         except Student.DoesNotExist:
             return Response({'confirmed': False})
 
-        return Response({'confirmed': True})
+        return Response({'confirmed': True, 'track': TrackSerializer(student.track).data})
             
