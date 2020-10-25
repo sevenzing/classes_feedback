@@ -19,7 +19,7 @@
 <div style="padding-left:16px">
     <h2>Surveys available for editing and reviewing:</h2>
     {% for survey in surveys_list %}
-        <li>{{ survey }} </li>
+        <li>{{ survey }} <a href="{{ survey.url }}"> {{ survey.url }}</a> </li> 
     {% endfor %}
 </div>
 

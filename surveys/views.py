@@ -12,15 +12,16 @@ class IndexView(generic.ListView):
     template_name = 'surveys/index.html'
     context_object_name = 'surveys_list'
 
-    #def get_context_data(self, *args, **kwargs):
-    #    return 
 
     def get_queryset(self):
         user = self.request.user
         if user.is_superuser:
             available_courses = Course.objects.all()
         else:
-            available_courses = user.courses.all()
+            try:
+                available_courses = user.courses.all()
+            except AttributeError:
+                return Survey.objects.none()
         return Survey.objects.all().filter(course__in=available_courses)
         
 def PTD_login_page(request):
@@ -39,7 +40,7 @@ def PTD_login_page(request):
             return HttpResponseRedirect(reverse('surveys:index'))
         else:
             context= {'form': form,
-                      'error': 'The username and password combination is incorrect'}
+                      'error': 'The email or password is incorrect'}
             # return error
             return render(request, 'registration/login.html', context)
 

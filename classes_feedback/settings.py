@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +26,13 @@ SECRET_KEY = '*i@dq-qfq+=rwox@go&vq2pellf@g2($-nosz)qcl@*ul0#8ia'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'surveys']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'surveys.apps.SurveysConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -122,3 +124,30 @@ STATIC_URL = '/static/'
 
 
 AUTH_USER_MODEL = 'surveys.CustomUser'
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
+
+BOT_ALIAS = os.getenv('BOT_ALIAS', '<bot alias not found>')
+
+API_KEY = os.getenv('BOT_TOKEN', '<bot_token_not_found>')

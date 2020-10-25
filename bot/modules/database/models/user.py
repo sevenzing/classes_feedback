@@ -1,47 +1,42 @@
 from typing import Union
-from sqlalchemy import Column, Integer, String
-from modules.database import db_handler, Base
-from sqlalchemy.exc import IntegrityError
+from pymongo.results import UpdateResult, InsertOneResult 
+from umongo import Document, fields, validate
+from marshmallow.exceptions import ValidationError
+from modules.database import mongo_instance
 import logging
 
-class User(Base):
-    __tablename__ = 'users'
-    
-    _id = Column(Integer, primary_key=True)
-    username = Column(String(40))
-    string = Column(String(500))
 
-    def update(self, **kwargs):
-        return update_user(chat_id=self._id, **kwargs)
-
-    def __repr__(self):
-       return f"User(_id={self._id}, username={self.username}, string={self.string})"
-        
-def __get(session, chat_id) -> User:
-    session.rollback()
-    return session.query(User).filter_by(_id=chat_id).first() 
-
-@db_handler()
-def get_user(session, chat_id) -> User:
-    return __get(session, chat_id)
-
-def __create(session, chat_id, **kwargs) -> None:
-    user = User(_id=chat_id, **kwargs)
-    session.add(user)
-    session.commit()
-
-@db_handler()
-def create_user_if_not_exists(session, chat_id, **kwargs) -> User:
-    try:
-        __create(session, chat_id, **kwargs)
-    except IntegrityError:
-        # user already exists
-        pass
-    finally:
-        return __get(session, chat_id=chat_id)
+@mongo_instance.register
+class User(Document):
+    '''
+    Represents user of bot
+    '''
+    chat_id = fields.IntField(required=True, unique=True)
+    username = fields.StrField(required=True)
+    email = fields.EmailField(required=True)
 
 
-@db_handler(commit=True)
-def update_user(session, chat_id, **kwargs):
-    return session.query(User).filter_by(_id=chat_id).update(kwargs)
-    
+    def update(self, **attrs) -> Union[UpdateResult, InsertOneResult]:
+        for attr in attrs:
+            self[attr] = attrs[attr]
+        return self.commit()
+
+    class Meta:
+        collection_name = 'users'
+
+def find_user(**dct) -> User:
+    '''
+    Finds user in database
+    '''
+    return User.find_one(dct)
+
+def create_user(chat_id, email, username) -> User:
+    '''
+    Creates User 
+    '''
+    user = User(chat_id=chat_id, email=email, username=username)
+    user.commit()
+    user.required_validate()
+    logging.debug(f"User with params {(chat_id, email, username)} created.")
+    return user
+

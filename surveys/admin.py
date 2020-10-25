@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Survey, Question, Course, Subject
+from .models import Survey, Question, Course, Subject, Track, Student
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
+
+import logging
 
 class QuestionInline(admin.TabularInline):
     model = Question
@@ -11,10 +13,28 @@ class QuestionInline(admin.TabularInline):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    pass
+     def get_queryset(self, request):
+        '''
+        Returns a query set of only those courses that can be accessed.
+        If superuser, than returns full query
+        '''
+        q = super().get_queryset(request)
+        user = request.user 
+        if user.is_superuser:
+            return q
+        return q.filter(id__in=user.courses.all())
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    fields = ('email', 'code', 'track')
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Track)
+class TrackAdmin(admin.ModelAdmin):
     pass
 
 
@@ -22,8 +42,8 @@ class SubjectAdmin(admin.ModelAdmin):
 class SurveyAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         '''
-        Returns a query set of only those surveys that can be accessed
-        if superuser, than returns full query
+        Returns a query set of only those surveys that can be accessed.
+        If superuser, than returns full query
         '''
         q = super().get_queryset(request)
         user = request.user 
@@ -54,7 +74,7 @@ class CustomUserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password', 'name', 'surname')}),
         ('Group', {'fields': ('groups',)}),
-        ('Permissions', {'fields': ('is_doe', 'is_ta', 'is_prof', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff', 'is_doe', 'is_ta', 'is_prof', 'is_active')}),
         ('Courses', {'fields': ('courses', )}),
     )
     add_fieldsets = (
