@@ -5,6 +5,9 @@ from typing import Tuple
 import logging
 
 async def start_survey(user: User, survey: Survey, message_from_user: types.Message):
+    '''
+    Starts `survey` for `user`.
+    '''
     amount_of_questions = survey.questions.__len__()
     assert amount_of_questions > 0, survey
     
@@ -17,6 +20,9 @@ async def start_survey(user: User, survey: Survey, message_from_user: types.Mess
     await show_question(user, user.current_question_number, message=message)
 
 async def show_question(user: User, question_number: int, message: types.Message):
+    '''
+    Edit `message` with actual question
+    '''
     question = Survey(**user.current_survey).questions[question_number]
     assert question.number == question_number
     text, keyboard = represent_question(user, question)
@@ -27,11 +33,27 @@ async def show_question(user: User, question_number: int, message: types.Message
         logging.error(f"message not modified. q_num: {question_number} user: {user}")
 
 def represent_question(user: User, question: Question) -> Tuple[str, types.InlineKeyboardMarkup]:
+    '''
+    Returns text of message and button for telegram message
+    '''
+
     answer = Answer(**(user.answers[question.number] or {}))
     keyboard = get_keyboard(question, answer)
     return question.__str__(), keyboard
 
 def get_keyboard(question: Question, answer) -> types.InlineKeyboardMarkup:
+    '''
+    Return buttons for choosing answer in this way:
+    [1: ... ] 
+    [2: ... ]
+    [3: ... ] 
+    [4: ... ]
+    
+       ...
+       
+    [ PREV ]
+    [ NEXT ]
+    '''
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     question_number = question.number
     
