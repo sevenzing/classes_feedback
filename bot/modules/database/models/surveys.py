@@ -6,11 +6,11 @@ class Survey:
         self.title = kwargs['survey_short_name']
         self.is_available = kwargs['is_available']
         questions = list(map(lambda data: Question(**data), kwargs['questions']))
-        logging.warning(questions.__str__())
         
         # make sure that numbering is ok
         for number, question in enumerate(questions):
             question.number = number
+            question.N = len(questions)
         
         self.questions = questions
         self.course = Course(**kwargs['course'])
@@ -27,10 +27,11 @@ class Question:
         self.type = kwargs['question_type']
         self.data = kwargs['data']
         self.id = kwargs.get('id', None)
+        self.N = -1
         self.raw_data = kwargs
 
     def __str__(self):
-        return f'Question #{self.number} "{self.text}"\n\n' + \
+        return f'Question #{self.number + 1} "{self.text}"\n\n' + \
                 '\n'.join(
                     map(
                         lambda x: f"{x[0]}: {x[1]}", 
