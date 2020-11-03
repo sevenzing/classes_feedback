@@ -1,9 +1,7 @@
 from aiogram import types
 import logging
 
-from modules.surveys.server_communation import validate_user
-from modules.database.models import User, find_user, create_user
-from modules.common.utils import parse_command, is_email_correct
+from modules.database.models import find_user
 from . import messages
 
 

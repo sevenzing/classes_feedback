@@ -5,6 +5,7 @@ import logging
 from .start import cmd_start
 from .register import cmd_register, RegistrationStates, process_code, process_email
 from .unregister import cmd_unregister
+from .info import cmd_info
 
 def setup(dp: Dispatcher, *args, **kwargs):
     logging.info('Initialize surveys module')
@@ -19,3 +20,6 @@ def setup(dp: Dispatcher, *args, **kwargs):
 
     # unregister
     dp.register_message_handler(cmd_unregister, Command('unregister'), state='*')
+
+    # info
+    dp.register_message_handler(cmd_info, Command('info'), state='*')
