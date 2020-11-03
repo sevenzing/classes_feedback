@@ -26,7 +26,8 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    fields = ('email', 'code', 'track')
+    list_display = ('email', 'code', 'track')
+    fields = ('email', 'track')
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -50,7 +51,8 @@ class SurveyAdmin(admin.ModelAdmin):
         if user.is_superuser:
             return q
         return q.filter(course__in=user.courses.all())
-    
+    list_display = ('__str__', 'url', 'deadline')
+    list_filter = ('course',)
     fieldsets = (
         ('Main', {
             'fields': (
