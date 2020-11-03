@@ -6,6 +6,7 @@ from .start import cmd_start
 from .register import cmd_register, RegistrationStates, process_code, process_email
 from .unregister import cmd_unregister
 from .info import cmd_info
+from .callback_answer import callback_answer_handler
 
 def setup(dp: Dispatcher, *args, **kwargs):
     logging.info('Initialize surveys module')
@@ -23,3 +24,9 @@ def setup(dp: Dispatcher, *args, **kwargs):
 
     # info
     dp.register_message_handler(cmd_info, Command('info'), state='*')
+
+    # answer handler
+    dp.register_callback_query_handler(
+        callback_answer_handler,
+        lambda query: query.data.startswith('answer'),
+    )

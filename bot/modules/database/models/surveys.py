@@ -1,10 +1,18 @@
+import logging
 
 class Survey:
     def __init__(self, *args, **kwargs):
         self.raw_data = kwargs
         self.title = kwargs['survey_short_name']
         self.is_available = kwargs['is_available']
-        self.questions = list(map(lambda data: Question(**data), kwargs['questions']))
+        questions = list(map(lambda data: Question(**data), kwargs['questions']))
+        logging.warning(questions.__str__())
+        
+        # make sure that numbering is ok
+        for number, question in enumerate(questions):
+            question.number = number
+        
+        self.questions = questions
         self.course = Course(**kwargs['course'])
         self.id = kwargs.get('id', None)
 
@@ -22,8 +30,18 @@ class Question:
         self.raw_data = kwargs
 
     def __str__(self):
-        return f'Question #{self.number} ({self.type}): "{self.text}"\n' + '\n'.join(self.data)
+        return f'Question #{self.number} "{self.text}"\n\n' + \
+                '\n'.join(
+                    map(
+                        lambda x: f"{x[0]}: {x[1]}", 
+                        enumerate(self.data),
+                        )
+                    )
 
+class Answer:
+    def __init__(self, *args, **kwargs):
+        self.data = kwargs.get('data', [])
+        self.raw_data = kwargs
 class Course:
     def __init__(self, *args, **kwargs):
         self.subject = kwargs['subject']

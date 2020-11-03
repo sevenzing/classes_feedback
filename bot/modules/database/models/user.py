@@ -16,7 +16,8 @@ class User(Document):
     email = fields.EmailField(required=True)
     track = fields.DictField()
     current_survey = fields.DictField(default={})
-    current_question = fields.DictField(default={})
+    current_question_number = fields.IntField(default=-1)
+    answers = fields.ListField(fields.DictField(default={}, allow_none=True))
 
     def update(self, **attrs) -> Union[UpdateResult, InsertOneResult]:
         for attr in attrs:
