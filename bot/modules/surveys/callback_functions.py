@@ -36,7 +36,8 @@ async def callback_answer_handler(query: types.CallbackQuery):
 
     elif command == messages.COMMAND_CHANGE:
         await show_question(user, int(choice_number), query.message)
-
+    
+    await query.answer('')
     
 
 async def callback_survey_handler(query: types.CallbackQuery):
@@ -48,3 +49,6 @@ async def callback_survey_handler(query: types.CallbackQuery):
 
     if command == messages.COMMAND_SUBMIT:
         await query.answer('submitted')
+        await query.message.delete()
+    
+    await query.answer('')

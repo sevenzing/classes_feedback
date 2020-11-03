@@ -78,7 +78,7 @@ def get_question_keyboard(question: Question, answer: list) -> types.InlineKeybo
             logging.warning(f"{choice}, {choice_number}, {answer}")
             keyboard.add(
                 types.InlineKeyboardButton(
-                    text=f"[{'x' if str(choice_number) in answer else ' '}] {choice_number}: {choice}",
+                    text=f"{messages.SELECTED if str(choice_number) in answer else messages.NOT_SELECTED} {choice_number}: {choice}",
                     callback_data=f"answer:{messages.COMMAND_SET}:{question_number}:{choice_number}",
                 )
             )

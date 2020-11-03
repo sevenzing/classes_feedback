@@ -17,7 +17,7 @@ async def cmd_start(message: types.Message):
     if args:
         chat_id = message.chat.id
         pk = args[0]
-        user: User = find_user(chat_id=chat_id)
+        user = find_user(chat_id=chat_id)
         logging.debug(f"user: {user}")
         
         if not user:

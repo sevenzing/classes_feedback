@@ -30,8 +30,19 @@ class Question:
         self.N = -1
         self.raw_data = kwargs
 
+    @property
+    def description(self):
+        if self.type == 0:
+            return "Choose one option"
+        elif self.type == 1:
+            return "Choose several options"
+        elif self.type == 2:
+            return "Rate from 1 to 10"
+        elif self.type == 3:
+            return "Write plain text"
+            
     def __str__(self):
-        return f'Question #{self.number + 1} "{self.text}"\n\n' + \
+        return f'Question #{self.number + 1} "{self.text}"\n{self.description}\n\n' + \
                 '\n'.join(
                     map(
                         lambda x: f"{x[0]}: {x[1]}", 
