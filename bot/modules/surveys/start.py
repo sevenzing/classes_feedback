@@ -1,10 +1,12 @@
 from aiogram import types
-import logging
+
 from modules.surveys.server_communation import get_survey
 from modules.surveys.question_manager import start_survey
 from modules.database.models import Survey, User, Track, find_user
 from modules.common.utils import parse_command
-from . import messages
+from modules.surveys import messages
+
+import logging
 
 
 async def cmd_start(message: types.Message):

@@ -2,7 +2,7 @@ from aiogram import types
 import logging
 
 from modules.database.models import User, find_user, Track
-from . import messages
+from modules.surveys import messages
 
 
 async def cmd_info(message: types.Message):

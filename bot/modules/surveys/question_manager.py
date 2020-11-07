@@ -2,9 +2,9 @@ from aiogram import types
 from aiogram.utils.exceptions import MessageNotModified
 from typing import Tuple
 from modules.database.models import Survey, User, Question, Answer
-import logging
+from modules.surveys import messages
 
-from . import messages
+import logging
 
 
 async def start_survey(user: User, survey: Survey, message_from_user: types.Message):

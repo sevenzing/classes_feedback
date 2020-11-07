@@ -1,7 +1,6 @@
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram import types
-import logging
 
 from modules.surveys.server_communation import validate_user
 from modules.common.utils import parse_command, is_email_correct
@@ -11,8 +10,10 @@ from modules.database.models import (
     find_user,
     create_user,
     )
-    
-from . import messages
+from modules.surveys import messages
+
+import logging
+
 
 class RegistrationStates(StatesGroup):
     wait_for_email = State()

@@ -1,8 +1,9 @@
 from aiogram import types
-import logging
 
 from modules.database.models import find_user
-from . import messages
+from modules.surveys import messages
+
+import logging
 
 
 async def cmd_unregister(message: types.Message):

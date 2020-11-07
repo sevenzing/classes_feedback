@@ -1,7 +1,7 @@
 from aiogram import types
 from modules.database.models import Survey, User, Track, find_user
 from modules.surveys.question_manager import show_question
-from . import messages
+from modules.surveys import messages
 import logging
 
 
