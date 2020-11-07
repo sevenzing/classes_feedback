@@ -1,12 +1,13 @@
 from aiogram import Dispatcher
-from aiogram.dispatcher.filters import Command, StateFilter
+from aiogram.dispatcher.filters import Command, StateFilter, Text
 import logging
 
 from .start import cmd_start
 from .register import cmd_register, RegistrationStates, process_code, process_email
 from .unregister import cmd_unregister
 from .info import cmd_info
-from .callback_functions import callback_answer_handler, callback_survey_handler
+from .callback_functions import callback_answer_handler, callback_survey_handler, QuestionsStates
+from .question_manager import process_plain_text
 
 def setup(dp: Dispatcher, *args, **kwargs):
     logging.info('Initialize surveys module')
@@ -29,9 +30,16 @@ def setup(dp: Dispatcher, *args, **kwargs):
     dp.register_callback_query_handler(
         callback_answer_handler,
         lambda query: query.data.startswith('answer'),
+        state='*',
     )
     # submit handler
     dp.register_callback_query_handler(
         callback_survey_handler,
         lambda query: query.data.startswith('survey'),
+    )
+
+    # plain text for 3rd type of question
+    dp.register_message_handler(
+        process_plain_text,
+        state=QuestionsStates.wait_for_plain_text,
     )
