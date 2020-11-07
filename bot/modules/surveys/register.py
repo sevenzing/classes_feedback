@@ -1,18 +1,12 @@
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher import FSMContext
-from aiogram import types
-
-from modules.surveys.server_communation import validate_user
-from modules.common.utils import parse_command, is_email_correct
-from modules.database.models import (
-    Track,
-    User, 
-    find_user,
-    create_user,
-    )
-from modules.surveys import messages
-
 import logging
+
+from aiogram import types
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from modules.common.utils import is_email_correct, parse_command
+from modules.database.models import Track, User, create_user, find_user
+from modules.surveys import messages
+from modules.surveys.server_communation import validate_user
 
 
 class RegistrationStates(StatesGroup):
@@ -21,7 +15,8 @@ class RegistrationStates(StatesGroup):
 
 
 async def cmd_register(message: types.Message):
-    logging.debug(f"register message. {message.from_user.id}/{message.from_user.username}")
+    logging.debug(
+        f"register message. {message.from_user.id}/{message.from_user.username}")
     user = find_user(chat_id=message.from_user.id)
     if user:
         await message.answer(messages.REGISTERED)
@@ -39,12 +34,13 @@ async def process_email(message: types.Message, state: FSMContext):
     if not is_email_correct(email):
         await message.answer(messages.INVALID_EMAIL)
         return
-        
+
     async with state.proxy() as data:
         data['email'] = email
-    
+
     await RegistrationStates.next()
     await message.answer(messages.SEND_CODE)
+
 
 async def process_code(message: types.Message, state: FSMContext):
     '''
@@ -58,9 +54,9 @@ async def process_code(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         email = data['email']
-    
+
     user_response = validate_user(email, code)
-    if not user_response['confirmed']:    
+    if not user_response['confirmed']:
         await message.answer(messages.INVALID_CODE)
     else:
         # create user
@@ -72,7 +68,7 @@ async def process_code(message: types.Message, state: FSMContext):
         except Exception:
             await message.answer('error.')
             return
-        finally:    
+        finally:
             await state.finish()
-        
+
         await message.answer(messages.REGISTER_FINISH % (email, track))

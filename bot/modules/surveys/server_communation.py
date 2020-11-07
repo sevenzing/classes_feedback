@@ -1,8 +1,9 @@
+import logging
+from json import dumps, loads
+
+import requests
 from modules.common.config.constants import SERVER_API_URL
 from modules.database.models import Survey
-import logging
-import requests
-from json import loads, dumps
 
 
 def get_survey(survey_pk) -> Survey:
@@ -12,13 +13,14 @@ def get_survey(survey_pk) -> Survey:
     url = f"{SERVER_API_URL}survey/{survey_pk}/"
     logging.info(f"Make request to server. Url: {url}")
     data = requests.get(url)
-    
+
     if data:
         logging.info(f"Got data: {data.content}")
         json_respone = loads(data.content)
         return Survey(**json_respone)
     else:
         logging.warning("No data got from server")
+
 
 def validate_user(email, code) -> dict:
     '''
@@ -34,6 +36,5 @@ def validate_user(email, code) -> dict:
     raw_response = requests.get(url, data=dumps(data))
     logging.info(f"Got response from server: {raw_response.content}")
     response_data = loads(raw_response.content)
-    
+
     return response_data
-    
