@@ -151,3 +151,6 @@ LOGGING = {
 BOT_ALIAS = os.getenv('BOT_ALIAS', '<bot alias not found>')
 
 API_KEY = os.getenv('BOT_TOKEN', '<bot_token_not_found>')
+
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD', None)
+EMAIL_LOGIN = os.getenv('EMAIL_LOGIN', None)
