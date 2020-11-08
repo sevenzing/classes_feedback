@@ -36,17 +36,21 @@ def get_survey(survey_pk) -> Union[Survey, None]:
     json_respone = make_request(url)
     return Survey(**json_respone)
 
-def validate_user(email, code) -> dict:
+def get_student(email) -> dict:
     """    
     Makes request to the server to validate user information.
     Return json response from server
     """
-    url = f"{SERVER_API_URL}user/validate/"
+    url = f"{SERVER_API_URL}student/by_email/"
     data = {
         'email': email,
-        'code': code,
     }
-    return make_request(url, data)
+    response = make_request(url, data)
+    if 'error' in response:
+        logging.warning(f"error for response {response}")
+        return {}
+    else:
+        return response
 
 def post_answer(question_id: int, answer_data: str):
     """

@@ -118,11 +118,11 @@ STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'surveys.CustomUser'
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK:dict = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
 
@@ -143,9 +143,3 @@ LOGGING = {
 BOT_ALIAS = os.getenv('BOT_ALIAS', '<bot alias not found>')
 
 API_KEY = os.getenv('BOT_TOKEN', '<bot_token_not_found>')
-
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-
-EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
-
-EMAIL_MESSAGE = os.getenv('EMAIL_MESSAGE')

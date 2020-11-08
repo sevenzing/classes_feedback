@@ -6,7 +6,8 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from modules.common.utils import is_email_correct, parse_command
 from modules.database.models import Track, User, create_user, find_user
 from modules.surveys import messages
-from modules.surveys.server_communation import validate_user
+from modules.surveys.server_communation import get_student
+from modules.surveys.utils import send_password
 
 
 class RegistrationStates(StatesGroup):
@@ -37,6 +38,13 @@ async def process_email(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         data['email'] = email
+    
+    student = get_student(email)
+    if not student:
+        await message.answer("there is no such student email")
+        return
+
+    send_password(email, student['code'])
 
     await RegistrationStates.next()
     await message.answer(messages.SEND_CODE)
@@ -55,14 +63,16 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         email = data['email']
 
-    user_response = validate_user(email, code)
-    if not user_response['confirmed']:
+    student = get_student(email)
+    if not student:
+        await message.answer(messages.INVALID_CODE)
+    elif str(student['code']) != str(code):
         await message.answer(messages.INVALID_CODE)
     else:
         # create user
         chat_id = message.from_user.id
         username = message.from_user.username
-        track = Track(**user_response['track'])
+        track = Track(**student['track'])
         try:
             user = create_user(chat_id, email, username, track.raw_data)
         except Exception:

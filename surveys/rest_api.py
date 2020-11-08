@@ -57,9 +57,10 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    track = TrackSerializer(read_only=True)
     class Meta:
         model = Student
-        fields = ['email']
+        fields = ['email', 'code', 'track']
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -90,23 +91,23 @@ class AnswerViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserViewSet(viewsets.ViewSet):
+class StudentViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post', 'get'])
-    def validate(self, request):
+    def by_email(self, request):
         logging.warning(f'Got data: {request.body}')
 
         try:
             data = json.loads(request.body)
             assert isinstance(data, dict)
-            email, code = data['email'], data['code']
+            email = data['email']
         except (AssertionError, JSONDecodeError) as e:
             return Response({'error': 'Incorrect format. Send json bytes'})
         except KeyError:
-            return Response({'error': 'email and code field does\'t provided'})
+            return Response({'error': 'email field is not provided'})
 
         try:
-            student: Student = Student.objects.get(email=email, code=code)
+            student: Student = Student.objects.get(email=email)
         except Student.DoesNotExist:
-            return Response({'confirmed': False})
+            return JsonResponse({'error': 'no such email'})
 
-        return Response({'confirmed': True, 'track': TrackSerializer(student.track).data})
+        return JsonResponse(StudentSerializer(student).data)
