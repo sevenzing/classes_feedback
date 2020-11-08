@@ -1,4 +1,3 @@
-import ast
 import datetime
 import logging
 import random
@@ -10,7 +9,7 @@ from django.db import models
 from django.utils import timezone
 
 from .managers import CustomUserManager
-
+from .utils import string_to_list
 
 def ten_digits_id():
     return random.randrange(10**10, 10**11)
@@ -158,13 +157,18 @@ class Question(models.Model):
 
     @property
     def data(self):
-        try:
-            data = ast.literal_eval(self.question_data)
-        except SyntaxError:
-            data = list(filter(lambda x: x, map(str.strip, self.question_data.split(';'))))
-        
-        assert isinstance(data, list), 'Data shoud be in form of list'
-        return data
+        return string_to_list(self.question_data)
 
     def __str__(self):
         return f"Question('{self.question_text}')"
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    answer_data = models.TextField('Content of answer')
+
+    def __str__(self):
+        return f"Answer({self.data})"
+    
+    @property
+    def data(self):
+        return string_to_list(self.answer_data)

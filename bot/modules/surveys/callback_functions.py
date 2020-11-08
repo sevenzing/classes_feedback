@@ -7,6 +7,7 @@ from aiogram.dispatcher import FSMContext
 from modules.database.models import Survey, Track, Question, User, find_user
 from modules.surveys import messages
 from modules.surveys.question_manager import show_question
+from modules.surveys.server_communation import post_answer
 
 class QuestionsStates(StatesGroup):
     wait_for_plain_text = State()
@@ -62,8 +63,21 @@ async def callback_survey_handler(query: types.CallbackQuery):
         return
 
     _, command, question_number, choice_number = query.data.split(':')
-
+    survey = Survey(**user.current_survey)
+    raw_answers = user.answers
+    questions = survey.questions
+    
     if command == messages.COMMAND_SUBMIT:
+        answers = list(map(
+            lambda x: {'answer_data': x[0], 'question_id':x[1].id}, 
+            zip(raw_answers, questions))
+            )
+        logging.debug(f"{answers}")
+        
+        # post all answers to the server
+        for answer in answers:
+            post_answer(**answer)
+        
         await query.answer('submitted')
         await query.message.delete()
     else:

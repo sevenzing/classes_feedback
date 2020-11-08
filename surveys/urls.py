@@ -12,7 +12,7 @@ app_name = 'surveys'
 router = routers.DefaultRouter()
 router.register(r'survey', rest_api.SurveyViewSet, basename='survey')
 router.register(r'user', rest_api.UserViewSet, basename='user')
-
+router.register(r'answer', rest_api.AnswerViewSet, basename='answer')
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),

@@ -51,8 +51,8 @@ class DeadlineError(Exception):
     pass
 
 
-def get_survey_or_error(user: User, pk):
-    survey: Survey = get_survey(pk)
+def get_survey_or_error(user: User, pk) -> Survey:
+    survey = get_survey(pk)
     if not survey:
         raise AccessError("You don't have access to this survey")
 

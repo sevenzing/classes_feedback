@@ -2,39 +2,60 @@ import logging
 from json import dumps, loads
 
 import requests
+from typing import Union
 from modules.common.config.constants import SERVER_API_URL
 from modules.database.models import Survey
 
 
-def get_survey(survey_pk) -> Survey:
+def make_request(url, data=None) -> dict:
     """
+    Make post or get request to the url
+    """
+    post = bool(data)
+    logging.info(f"Make {'post' if post else 'get'} request to server. Url: {url}")
+    if post:
+        # POST 
+        raw_response = requests.post(url, data=dumps(data))
+    else:
+        # GET
+        raw_response = requests.get(url)
+    
+    if not raw_response.ok:
+        raise ValueError(f"Response from server: {raw_response.content!r}")
+    
+    logging.info(f"Got response from server: {raw_response.content!r}")
+    response_data = loads(raw_response.content)
+    return response_data
+
+def get_survey(survey_pk) -> Union[Survey, None]:
+    """
+    Makes request to the server
     Return list of questions for survey with pk=survey_pk
     """
     url = f"{SERVER_API_URL}survey/{survey_pk}/"
-    logging.info(f"Make request to server. Url: {url}")
-    data = requests.get(url)
-
-    if data:
-        logging.info(f"Got data: {data.content}")
-        json_respone = loads(data.content)
-        return Survey(**json_respone)
-    else:
-        logging.warning("No data got from server")
-
+    json_respone = make_request(url)
+    return Survey(**json_respone)
 
 def validate_user(email, code) -> dict:
-    '''
-    Asks server to validate user information.
+    """    
+    Makes request to the server to validate user information.
     Return json response from server
-    '''
+    """
     url = f"{SERVER_API_URL}user/validate/"
-    logging.info(f"Make request to server. Url: {url}")
     data = {
         'email': email,
         'code': code,
     }
-    raw_response = requests.get(url, data=dumps(data))
-    logging.info(f"Got response from server: {raw_response.content}")
-    response_data = loads(raw_response.content)
+    return make_request(url, data)
 
-    return response_data
+def post_answer(question_id: int, answer_data: str):
+    """
+    Makes request to the server to post new answer
+    Returns json repsone from server
+    """
+    url = f"{SERVER_API_URL}answer/"
+    data = {
+        'question_id': question_id,
+        'answer_data': answer_data,
+    }
+    return make_request(url, data)
