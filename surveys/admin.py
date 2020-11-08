@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import Survey, Question, Course, Subject, Track, Student
+from .models import Survey, Question, Course, Subject, Track, Student, Answer, Question
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 
@@ -38,7 +38,13 @@ class SubjectAdmin(admin.ModelAdmin):
 class TrackAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    pass
 
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('question_text', 'data')
 
 class SurveyAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
