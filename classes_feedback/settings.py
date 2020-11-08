@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ SECRET_KEY = '*i@dq-qfq+=rwox@go&vq2pellf@g2($-nosz)qcl@*ul0#8ia'
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'surveys']
-
 
 # Application definition
 
@@ -72,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'classes_feedback.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -82,7 +79,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -102,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -116,21 +111,18 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
 
-
 AUTH_USER_MODEL = 'surveys.CustomUser'
-
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
 
@@ -152,5 +144,8 @@ BOT_ALIAS = os.getenv('BOT_ALIAS', '<bot alias not found>')
 
 API_KEY = os.getenv('BOT_TOKEN', '<bot_token_not_found>')
 
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD', None)
-EMAIL_LOGIN = os.getenv('EMAIL_LOGIN', None)
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
+EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
+
+EMAIL_MESSAGE = os.getenv('EMAIL_MESSAGE')
