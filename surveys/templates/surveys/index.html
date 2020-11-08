@@ -7,25 +7,129 @@
 </head>
 <body>
 
+{% if user.is_authenticated %}
+
 <div class="topnav">
-    <a class="active" href="{% url 'surveys:index' %}">Home</a>
-    <a href="#about">How to use</a>
+    <!--<a class="active" href="{% url 'surveys:index' %}">Home</a>
+    <a href="#about">How to use</a>-->
+    <img class="image-logo" src="{% static 'index/IU_icon.png' %}" alt="logo">
     <div class="topnav-right">
-        <a>Hello, {{ user }}</a>
-         <a href="{% url 'surveys:logout' %}">Log Out</a>
+        <a >Hello, {{ user }}</a>
+        <a class="admin-panel" href="{% url 'admin:index'%}">Adminka</a>
+        <a href="{% url 'surveys:logout' %}">Log Out</a>
     </div>
 </div>
 
-<div style="padding-left:16px">
-    <h2>Surveys available for editing and reviewing:</h2>
-    {% for survey in surveys_list %}
-        <li>{{ survey }} <a href="{{ survey.url }}"> {{ survey.url }}</a> </li> 
-    {% endfor %}
+<div class="content">
+
+  <div class="main-content">
+
+    <h2>Available surveys for editing and reviewing:</h2>
+    
+    <ul class="add-survey">
+      <li>
+      <a href="{% url 'admin:surveys_survey_add'%}" class="addSurvey">Add survey <img class="image_add" src="{% static 'index/plus_icon.png' %}" alt="add"></a>
+      </li>
+    </ul>
+
+
+    <div class="filter">
+
+      <table>
+        <thead>
+          <tr>
+            <td>
+              <h3>Filter</h3>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <form class="search" method="get">
+                <div>
+                <input type="text" size="40" name="q" value="" id="searchbar" autofocus="">
+                <input type="submit" value="Search">
+                </div>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="results">
+
+      <table class="list_of_surveys">
+        <thead>
+          <tr>
+            <th scope="col" class="column-survey">
+              <div class="text"><span>Survey</span></div>
+            </th>
+            <th scope="col" class="column-bot">
+              <div class="text"><span>Bot url</span></div>
+            </th>
+            <th scope="col" class="column-edit">
+              <div class="text"><span>Edit</span></div>
+            </th>
+          </tr >
+        </thead>
+        {% if surveys_list %}
+        <tbody>
+          {% for survey in surveys_list %}
+              <tr>
+                <td class="name">
+                  <a href="{{ survey }}"> {{ survey }}</a> 
+                </td>
+                <td class="bot_url">
+                  <a href="{{ survey.url }}"> {{ survey.url }}</a> 
+                </td>
+                <td class="edit">
+                  <a href="{% url 'admin:surveys_survey_change' survey.id %}"> <img class="image_edit" src="{% static 'index/edit_icon.png' %}" alt="edit"></a> 
+                </td>
+              </tr>
+          {% endfor %}
+        </tbody>
+        {% endif %}
+      </table>
+
+      <table class="number-of-pages">
+        <tbody>
+          <tr>
+            <td>
+              Total number of surveys: {{ surveys_list|length }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+
 </div>
+
+{% else %}
+<div class="topnav">
+  <!--<a class="active" href="{% url 'surveys:index' %}">Home</a>
+  <a href="#about">How to use</a>-->
+  <img class="image-logo" src="{% static 'index/IU_icon.png' %}" alt="logo">
+  <div class="topnav-right">
+      <a >Hello, {{ user }}</a>
+      <a href="{% url 'surveys:login' %}">Log In</a>
+  </div>
+</div>
+
+<div class="not-authenticated">
+  <h2>Unfortunately, you are not logged in</h2>
+</div>
+
+{% endif%}
+
 
 <div class="footer">
   <p>Classes quality feedback project. All rights reserved 2020.</p>
 </div>
+
 </body>
 </html>
-
