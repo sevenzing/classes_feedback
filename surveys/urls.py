@@ -18,7 +18,9 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('api-auth/', include('rest_framework.urls')),
     path(f'api/{API_KEY}/', include(router.urls)),
+    path('<pk>/', views.SurveyDetailView.as_view(), name='survey_detail'),
     url(r'^login$', views.PTD_login_page, name='login'),
     url(r'^logout$', views.PTD_logout, name='logout'),
+
 ]
 

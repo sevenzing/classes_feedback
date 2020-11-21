@@ -80,7 +80,7 @@
           {% for survey in surveys_list %}
               <tr>
                 <td class="name">
-                  <a href="{{ survey }}"> {{ survey }}</a> 
+                  <a href="{% url 'surveys:survey_detail' survey.id %}"> {{ survey }}</a> 
                 </td>
                 <td class="bot_url">
                   <a href="{{ survey.url }}"> {{ survey.url }}</a> 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    
+    <link rel="stylesheet" href="{% static 'index/style.css' %}">
+</head>
+<body>
+
+{% if user.is_authenticated %}
+
+<div class="topnav">
+    <!--<a class="active" href="{% url 'surveys:index' %}">Home</a>
+    <a href="#about">How to use</a>-->
+    <img class="image-logo" src="{% static 'index/IU_icon.png' %}" alt="logo">
+    <div class="topnav-right">
+        <a >Hello, {{ user }}</a>
+        <a class="admin-panel" href="{% url 'admin:index'%}">Admin panel</a>
+        <a href="{% url 'surveys:logout' %}">Log Out</a>
+    </div>
+</div>
+
+<div class="content">
+
+  <div class="main-content">
+    
+    <table id="answers">
+    {% for i in data %}
+        <tr>
+        {% for j in i %}
+            <td scope="col"> {{ j }}</td>
+        {% endfor %}
+        
+        </tr>
+    {% endfor %}
+
+  </div>
+</div>
+
+{% else %}
+<div class="topnav">
+  <!--<a class="active" href="{% url 'surveys:index' %}">Home</a>
+  <a href="#about">How to use</a>-->
+  <img class="image-logo" src="{% static 'index/IU_icon.png' %}" alt="logo">
+  <div class="topnav-right">
+      <a >Hello, {{ user }}</a>
+      <a href="{% url 'surveys:login' %}">Log In</a>
+  </div>
+</div>
+
+<div class="not-authenticated">
+  <h2>Unfortunately, you are not logged in</h2>
+</div>
+
+{% endif%}
+
+
+<div class="footer">
+  <p>Classes quality feedback project. All rights reserved 2020.</p>
+</div>
+
+</body>
+</html>
+

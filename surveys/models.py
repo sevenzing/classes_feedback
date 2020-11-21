@@ -168,6 +168,17 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"Answer({self.data})"
+
+    @property
+    def expanded_data(self):
+        question: Question = self.question
+        if question.question_type in [0, 1]:
+            expanded_data = []
+            for choice in self.data:
+                expanded_data.append(question.data[int(choice)])
+            return expanded_data
+        else:
+            return self.data
     
     @property
     def data(self):

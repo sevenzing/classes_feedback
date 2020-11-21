@@ -3,10 +3,16 @@ from django.utils import timezone
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
+from django.views.generic.detail import DetailView 
 from django.contrib.auth import authenticate, login, logout
 
-from .models import Survey, Course
+from .models import Survey, Course, Question
 from .forms import PTDLoginForm
+
+from typing import List, Dict
+import logging
+from numpy import transpose
+
 
 class IndexView(generic.ListView):
     template_name = 'surveys/index.html'
@@ -52,3 +58,21 @@ def PTD_login_page(request):
 def PTD_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('surveys:login'))
+
+class SurveyDetailView(DetailView):
+
+    model = Survey
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        survey: Survey = context['survey']
+        questions = survey.questions.all()
+        data = []
+        for i, question in enumerate(questions):
+            data.append([])
+            data[i].append(question.question_text)
+            for answer in question.answers.all():
+                data[i].append(','.join(answer.expanded_data))
+        
+        context['data'] = transpose(data)
+        return context

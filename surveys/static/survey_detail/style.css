@@ -1,0 +1,23 @@
+#answers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #answers td, #answers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #answers tr:nth-child(even){background-color: #ffffff;}
+  
+  #answers tr:hover {background-color: rgb(224, 223, 223);}
+  
+  #answers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(231, 139, 86);
+    color: rgb(231, 139, 86);
+  }
+  
