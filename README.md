@@ -35,3 +35,5 @@ Commments:
 > djano didn't attach with docker-compose yet 
 
 > bot uses default mysql database, in order to stat the bot you have to create database in `localhost:8080`
+
+> God of FSE, help us!
