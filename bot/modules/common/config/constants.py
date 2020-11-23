@@ -22,4 +22,4 @@ mongo = {
 
 TIME_ZONE = 'Etc/GMT-3'
 
-SERVER_API_URL = f'http://surveys:8000/surveys/api/{BOT_TOKEN}/'
+SERVER_API_URL = f'http://surveys:80/surveys/api/{BOT_TOKEN}/'
