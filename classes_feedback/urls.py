@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import redirect_to_surveys
 
 urlpatterns = [
-    path('surveys/', include('surveys.urls')),
+    path('surveys/', include('surveys.urls'), name='surveys'),
+    path('', redirect_to_surveys),
     path('admin/', admin.site.urls),
 ]
