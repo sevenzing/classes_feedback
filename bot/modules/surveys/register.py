@@ -36,6 +36,11 @@ async def process_email(message: types.Message, state: FSMContext):
         await message.answer(messages.INVALID_EMAIL)
         return
 
+    user = find_user(email=email)
+    if user:
+        await message.answer(f'user with username {user.username} already exists')
+        return
+
     async with state.proxy() as data:
         data['email'] = email
     
